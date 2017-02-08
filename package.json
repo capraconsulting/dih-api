@@ -71,7 +71,7 @@
     "babel-core": "6.9.1",
     "babel-eslint": "6.0.4",
     "babel-preset-es2015": "6.9.0",
-    "babel-preset-stage-0": "6.5.0",
+    "babel-preset-stage-0": "6.22.0",
     "child-process-promise": "2.0.3",
     "coveralls": "2.11.9",
     "ecs-deploy-cli": "0.0.6",
