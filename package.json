@@ -59,7 +59,7 @@
     "nodemailer-ses-transport": "1.5.0",
     "pg": "6.0.1",
     "raven": "1.1.1",
-    "sequelize": "3.30.1",
+    "sequelize": "3.30.2",
     "sequelize-fixtures": "0.5.3",
     "sinon": "1.17.4",
     "supertest": "3.0.0",
