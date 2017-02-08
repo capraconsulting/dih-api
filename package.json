@@ -75,7 +75,7 @@
     "child-process-promise": "2.0.3",
     "coveralls": "2.11.9",
     "ecs-deploy-cli": "0.0.6",
-    "esdoc": "0.4.7",
+    "esdoc": "0.5.2",
     "esdoc-es7-plugin": "0.0.3",
     "eslint": "3.14.1",
     "eslint-config-airbnb-base": "5.0.1",
