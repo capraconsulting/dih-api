@@ -58,7 +58,7 @@
     "nodemailer-express-handlebars": "2.0.0",
     "nodemailer-ses-transport": "1.5.0",
     "pg": "6.0.1",
-    "raven": "1.1.1",
+    "raven": "1.1.2",
     "sequelize": "3.23.3",
     "sequelize-fixtures": "0.5.3",
     "sinon": "1.17.4",
