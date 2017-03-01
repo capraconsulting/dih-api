@@ -45,6 +45,28 @@ export function retrieve(req, res, next) {
     .catch(next);
 }
 
+
+/**
+ * retrieve - Retrieves the auditlog of an mailTemplate by ID.
+ *
+ * @function retrieve
+ * @memberof module:controllers/trip
+ * @param  {Object} req  Express request object
+ * @param  {Object} res  Express response object
+ * @param  {Function} next Express next middleware function
+ */
+export function retrieveAuditLog(req, res, next) {
+    db.AuditLog.findAll({
+        where: {
+            entity: db.MailTemplate.tableName,
+            entityId: req.params.id
+        }
+    })
+    .then(res.json.bind(res))
+    .catch(next);
+}
+
+
 /**
  * create - creates a mailTemplate.
  *

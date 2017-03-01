@@ -6,6 +6,7 @@ import { randomBytes } from 'crypto';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Promise from 'bluebird';
+import auditLogger from '../components/auditLogger';
 import { USER_ROLES, GENDERS } from '../components/constants';
 import { CustomValidationError } from '../components/errors';
 import * as mail from '../components/mail';
@@ -149,6 +150,7 @@ export default function (sequelize, DataTypes) {
             }
         },
         hooks: {
+            ...auditLogger,
             beforeUpdate: [
                 user => {
                     if (user.changed('isActive') && !user.isActive) {

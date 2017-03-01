@@ -29,7 +29,7 @@ app.use(json());
 app.use(methodOverride());
 app.use(cookieParser());
 app.use(cors());
-app.use(morgan('dev'));
+app.use(morgan('combined'));
 
 if (config.nodeEnv === 'development') {
     app.use(errorHandler());

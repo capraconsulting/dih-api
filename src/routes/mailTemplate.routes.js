@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get('/', authorizeAdministrator, controller.list);
 
+router.get('/:id/log', authorizeAdministrator, controller.retrieveAuditLog);
+
 router.get('/:id', authorizeAdministrator, controller.retrieve);
 
 router.post('/', authorizeAdministrator, controller.create);
