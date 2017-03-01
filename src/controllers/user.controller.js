@@ -62,9 +62,8 @@ export function update(req, res, next) {
     })
     .then(user => {
         if (!user) throw new ResourceNotFoundError('user');
-        return [Sequelize.transaction(), user];
+        return user.update(req.body);
     })
-    .spread((transaction, user) => user.update(req.body, { transaction }))
     .then(() => res.sendStatus(204))
     .catch(Sequelize.ValidationError, err => {
         throw new ValidationError(err);

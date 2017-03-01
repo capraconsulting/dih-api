@@ -20,9 +20,7 @@ export function errorMiddleware(err, req, res, next) {
     if (config.nodeEnv === 'development') {
         console.log(err.stack); // eslint-disable-line
     }
-    console.log(err);
-    console.log(err.message);
-    console.log(err.stack);
+
     const status = err.status || 500;
     return res
     .status(status)

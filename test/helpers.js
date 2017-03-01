@@ -8,23 +8,15 @@ import config from '../src/config';
 
 Promise.promisifyAll(jwt);
 
-
-const loadFileWithTransaction = (file) => db.sequelize.transaction()
-    .then((transaction) => [transaction, sequelizeFixtures.loadFile(file, db, { transaction })])
-    .spread((transaction) => transaction.commit());
-
-
 export function loadFixtures(fixtures) {
     const f = fixtures || [
         'users',
         'destinations',
         'trips'
     ];
-
     const fixturePaths = f.map(file => `${path.resolve(__dirname)}/fixtures/${file}.json`);
     return syncDB({ force: true })
-        .then(() => fixturePaths)
-        .mapSeries(loadFileWithTransaction);
+        .then(() => sequelizeFixtures.loadFiles(fixturePaths, db));
 }
 
 /**
