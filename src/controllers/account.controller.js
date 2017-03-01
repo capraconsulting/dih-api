@@ -76,8 +76,10 @@ export function update(req, res, next) {
     })
     .then(user => {
         if (!user) throw new errors.ResourceNotFoundError('trip');
-        return user.update(req.body);
+        return [db.sequelize.transaction(), user];
     })
+    .spread((transaction, user) => [transaction, user.update(req.body, { transaction })])
+    .spread(transaction => transaction.commit())
     .then(() => res.sendStatus(204))
     .catch(Sequelize.ValidationError, err => {
         throw new errors.ValidationError(err);
