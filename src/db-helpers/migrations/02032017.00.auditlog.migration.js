@@ -3,7 +3,7 @@ import { VALID_ACTIONS } from '../../components/constants';
 
 module.exports = {
     up(migration, DataTypes) {
-        return migration.createTable('auditLog', {
+        return migration.createTable('auditLogs', {
             id: {
                 type: DataTypes.UUID,
                 defaultValue: DataTypes.UUIDV4,
@@ -47,7 +47,7 @@ module.exports = {
     },
 
     down(migration) {
-        return migration.dropTable('auditLog', 'emergencyContactInfo');
+        return migration.dropTable('auditLog');
     }
 
 };
