@@ -26,6 +26,7 @@ export function list(req, res, next) {
         where: query,
         include: [{
             model: db.User,
+            where: { isActive: true },
             attributes: {
                 exclude: ['hash']
             }
