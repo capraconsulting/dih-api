@@ -1,3 +1,4 @@
+
 export default function (sequelize, DataTypes) {
     const DestinationCoordinator = sequelize.define('destinationCoordinator', {
         destinationId: {

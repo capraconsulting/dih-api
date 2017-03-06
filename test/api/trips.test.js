@@ -5,6 +5,7 @@ import { loadFixtures, getAllElements, createValidJWT } from '../helpers';
 import app from '../../src/app';
 
 const URI = '/trips';
+const userURI = '/users';
 
 let tripObjects;
 let userObjects;
@@ -15,7 +16,6 @@ const mockTrip = {
     endDate: '2020-04-25T01:32:21.196+0200',
     notes: 'Looking forward to my trip.'
 };
-
 const arrivalDate = '2030-04-25T01:32:21.196+0200';
 const departureDate = '2031-04-25T01:32:21.196+0200';
 
@@ -357,6 +357,28 @@ describe.serial('Trip API', it => {
         const user = userObjects[3];
         await request(app)
             .get(`${URI}/`)
+            .set('Authorization', `Bearer ${createValidJWT(user)}`)
+            .then(res => res.body)
+            .then(res => t.is(res.length, 0));
+    });
+
+    it('should not return any trips for a deactivated user'
+    , async t => {
+        const user = userObjects[0];
+        const admin = userObjects[1];
+        // deactivate user
+        const validJwt = createValidJWT(admin);
+        await request(app)
+            .put(`${userURI}/${user.id}`)
+            .send({ isActive: false })
+            .set('Authorization', `Bearer ${validJwt}`)
+            .expect(204)
+            .then(() => request(app)
+                .get(URI)
+                .set('Authorization', `Bearer ${validJwt}`)
+        );
+        await request(app)
+            .get(`${URI}`)
             .set('Authorization', `Bearer ${createValidJWT(user)}`)
             .then(res => res.body)
             .then(res => t.is(res.length, 0));

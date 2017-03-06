@@ -8,6 +8,7 @@ import mailTemplate from './mailTemplate.routes';
 import message from './message.routes';
 import trip from './trip.routes';
 import { pageNotFoundMiddleware, sentryClient, errorMiddleware } from '../components/errors';
+import config from '../config';
 
 const router = express.Router();
 
@@ -20,7 +21,11 @@ router.use('/mailtemplates', mailTemplate);
 router.use('/messages', message);
 
 router.use(pageNotFoundMiddleware);
-router.use(raven.middleware.express.errorHandler(sentryClient));
+
+if (config.env === 'production' || config.env === 'staging') {
+    router.use(raven.errorHandler(sentryClient));
+}
+
 router.use(errorMiddleware);
 
 export default router;

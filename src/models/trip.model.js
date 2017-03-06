@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import { validateQuery } from '../components/queryValidator';
+import auditLogger from '../components/auditLogger';
 import { TRAVEL_METHODS, TRIP_STATUSES, USER_ROLES, STANDARD_MAIL_TEMPLATES }
 from '../components/constants';
 import db from './';
@@ -88,7 +89,7 @@ export default function (sequelize, DataTypes) {
                                         in: destinationIds
                                     } },
                                 { userId: req.user.id }
-                            ]
+                                ]
                             });
                         });
                     } else if (req.user.role === USER_ROLES.ADMIN) return resolve(req.query);
@@ -96,6 +97,7 @@ export default function (sequelize, DataTypes) {
             }
         },
         hooks: {
+            ...auditLogger,
             beforeUpdate: [
                 trip => {
                     if (trip.changed('status')) {

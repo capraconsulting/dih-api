@@ -7,7 +7,7 @@ import Promise from 'bluebird';
 import { handleError } from '../errors';
 import config from '../../config';
 
-let sns = new Promise.promisifyAll(new AWS.SNS(config.sns));
+let sns = new Promise.promisifyAll(new AWS.SNS({ region: config.region }));
 
 /**
  * updateSNS - This function allows us to update the sns object to be used for testing.
@@ -36,6 +36,15 @@ export function sendSMS(recipient, smsData) {
         PhoneNumber: recipient.phoneNumber,
         Subject: smsData.sender
     };
+
+    // This is for allowing us to see the messages in development
+    // And mocking a good response.
+    if (config.nodeEnv === 'development') {
+        console.log(params); // eslint-disable-line
+        return Promise.resolve(recipient);
+    }
+
+
     return sns.setSMSAttributesAsync({
         attributes: {
             DefaultSenderID: smsData.sender

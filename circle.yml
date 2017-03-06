@@ -1,7 +1,6 @@
-## circle.yml
 machine:
     node:
-        version: 6.2.2
+        version: 6.7.0
     environment:
         NODE_ENV: test
     services:
@@ -9,21 +8,21 @@ machine:
 
 dependencies:
     pre:
-        - npm install -g npm babel-cli
         - sudo pip install awscli
         - aws configure set default.region eu-west-1
         - aws configure set default.output json
         - eval $(aws ecr get-login --region eu-west-1)
+        - sudo -u postgres createuser dih -s
+        - createdb -U dih dih
+        - npm install -g yarn
     override:
-        - npm install
+        - yarn
 
 test:
     override:
-        - npm test:
-            environment:
-                PG_URL: postgres://ubuntu:@127.0.0.1:5432/circle_test
+        - yarn test
     post:
-        - npm run coverage
+        - yarn coverage
 
 deployment:
 
@@ -33,12 +32,7 @@ deployment:
             - docker build -t dih-api:production-latest .
             - docker tag dih-api:production-latest $EXTERNAL_REGISTRY:production-latest
             - docker push $EXTERNAL_REGISTRY:production-latest
-            - babel-node deploy.js:
-                environment:
-                    WEB: http://app.drapenihavet.no
-                    EMAIL: frivillig@drapenihavet.no
-                    NODE_ENV: production
-                    PORT: 9000
+            - yarn deploy:production
 
     staging:
         branch: dev
@@ -47,9 +41,4 @@ deployment:
             - docker tag dih-api:staging-latest $EXTERNAL_REGISTRY:staging-latest
             - docker push $EXTERNAL_REGISTRY:staging-latest
             - npm run docs
-            - babel-node deploy.js:
-                environment:
-                    WEB: http://staging.dih.capra.me
-                    EMAIL: staging@dih.capra.me
-                    NODE_ENV: staging
-                    PORT: 8000
+            - yarn deploy:staging

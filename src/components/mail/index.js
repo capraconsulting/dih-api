@@ -13,6 +13,9 @@ import config from '../../config';
 import { TRIP_STATUSES } from '../constants';
 
 let transporter;
+const transport = config.nodeEnv === 'development'
+    ? config.smtpUrl : ses({ region: config.region });
+
 const options = hbs({
     viewEngine: handlebars.create({}),
     viewPath: path.resolve(__dirname.replace('/dist/', '/src/'))
@@ -25,14 +28,14 @@ const options = hbs({
  *
  * @function updateTransport
  * @memberof  module:components/mail
- * @param  {Object} transport the transport ubject we would like to use
+ * @param  {Object} transportMedium the transport ubject we would like to use
  */
-export function updateTransport(transport) {
-    transporter = Promise.promisifyAll(nodemailer.createTransport(transport));
+export function updateTransport(transportMedium) {
+    transporter = Promise.promisifyAll(nodemailer.createTransport(transportMedium));
     transporter.use('compile', options);
 }
 
-updateTransport(ses(config.ses));
+updateTransport(transport);
 
 /**
  * sendResetPasswordEmail - Sends an reset password email to the specified user,
@@ -47,6 +50,7 @@ export function sendResetPasswordEmail(user, token) {
     const mailOptions = {
         to: user.email,
         from: `A Drop in the Ocean <${config.email}>`,
+        replyTo: config.email,
         subject: 'Password reset for A Drop in the Ocean',
         template: 'action',
         context: {
@@ -76,6 +80,7 @@ export function sendInvite(user, token) {
     const mailOptions = {
         to: user.email,
         from: `A Drop in the Ocean <${config.email}>`,
+        replyTo: config.email,
         subject: 'Complete registration - A Drop in the Ocean!',
         template: 'action',
         context: {
@@ -107,7 +112,7 @@ export function sendDestinationAction(tripId, tripStatus, user, mailContent, tok
     const mailOptions = {
         to: user.email,
         from: `A Drop in the Ocean <${config.email}>`,
-        replyTo: config.replyEmail,
+        replyTo: config.email,
         template: 'action',
         context: {
             content: mailContent
@@ -139,7 +144,7 @@ export function sendDestinationInfo(tripStatus, user, mailContent) {
     const mailOptions = {
         to: user.email,
         from: `A Drop in the Ocean <${config.email}>`,
-        replyTo: config.replyEmail,
+        replyTo: config.email,
         template: 'info',
         context: {
             content: mailContent
@@ -178,7 +183,7 @@ Thanks!`;
     const mailOptions = {
         to: user.email,
         from: `A Drop in the Ocean <${config.email}>`,
-        replyTo: config.replyEmail,
+        replyTo: config.email,
         subject: 'Your profile has been deleted',
         template: 'info',
         context: { content }
@@ -202,7 +207,7 @@ export function sendCustomMail(recipient, mailData) {
     const mailOptions = {
         to: recipient.email,
         from: `A Drop in the Ocean <${config.email}>`,
-        replyTo: config.replyEmail,
+        replyTo: config.email,
         subject: mailData.subject,
         template: 'info',
         context: {

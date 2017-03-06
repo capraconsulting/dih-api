@@ -9,10 +9,9 @@ docs
 out
 *.swo
 .environment
+/sms
 dist
 email
 coverage
 .nyc_output
 doc
-/sms
-.yarnclean

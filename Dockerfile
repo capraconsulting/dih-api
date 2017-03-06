@@ -13,3 +13,6 @@ COPY . /app
 # Build image
 RUN npm install
 RUN npm run build
+
+# Start the server
+ENTRYPOINT ["npm", "start"]

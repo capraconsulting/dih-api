@@ -30,28 +30,26 @@ To setup the project locally install Postgres and set `PG_URL ` to your database
 To export your variable on a Unix-system, simply use the `export` command, i.e. `export PG_URL=your value`.
 
 ### SES for e-mails
-The system uses AWS SES for e-mails. You'll need to set the following environment variables for this to work:
-
-* `SES_ACCESSID`
-* `SES_SECRETKEY`
+The system uses AWS SES for e-mails and sms notifications. You'll need to have the correct role installed on the instance running the application.
 
 You can also set your AWS region with `REGION`.
 
  Contact one of the contributors to get more information on how to be added to the AWS teams, or take a look at [Confluence](https://confluence.capraconsulting.no/pages/viewpage.action?pageId=83398017) for some standard values you can use for testing.
 
 ### Local production environment
-Run `npm run build` to get a transpiled version of the API, then start with `npm start`.
+Run `yarn build` to get a transpiled version of the API, then start with `yarn start`.
 
 ### Local development environment
 If you're gonna develop:
 
-1. Install nodemon `npm install -g nodemon`
-2. Run  `npm run start:dev` Remember that you can run it with environment variables in before the command, i.e. `PG_URL=value npm run start:dev`.
+1. Install nodemon `npm install -g nodemon` & yarn `npm install -g yarn`
+2. Spin up docker-compose to run services like db and emails locally.
+3. Run  `yarn start:dev` Remember that you can run it with environment variables in before the command, i.e. `PG_URL=value yarn start:dev`.
 
 This will watch for changes and keep the application open for you.
 
 ### Test data
-To enter some test data into your database, run `npm run load`. It will give you some test users
+To enter some test data into your database, run `yarn load`. It will give you some test users
 
 |Role | Username |
 |:--|:--|
@@ -67,12 +65,12 @@ To enter some test data into your database, run `npm run load`.
 
 ### Single run
 
-* Run unit tests & code lint with `npm test`. This will use your local database.
-* Run just unit tests with `npm run tests` with `NODE_ENV=test`. This will use your local database.
+* Run unit tests & code lint with `yarn test`. This will use your local database.
+* Run just unit tests with `yarn tests` with `NODE_ENV=test`. This will use your local database.
 
 ### Watch
 
-Run the unit tests continuously with `npm run test:watch`, only the tests currently worked on will run when updated.
+Run the unit tests continuously with `yarn test:watch`, only the tests currently worked on will run when updated.
 All tests will run when a server file is updated. This will use your local database.
 
 ## Deployment

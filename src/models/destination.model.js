@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import Promise from 'bluebird';
+import auditLogger from '../components/auditLogger';
 import { TRIP_STATUSES, STANDARD_MAIL_TEMPLATES } from '../components/constants';
 import { createMailTemplatesForDestination } from '../db-helpers';
 import db from './';
@@ -38,6 +39,7 @@ export default function (sequelize, DataTypes) {
             }
         },
         hooks: {
+            ...auditLogger,
             beforeCreate: createMailTemplatesForDestination,
             beforeSave: createMailTemplatesForDestination
         },

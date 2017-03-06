@@ -7,7 +7,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import errorHandler from 'errorhandler';
-import bodyParser from 'body-parser';
+import { urlencoded, json } from 'body-parser';
 import raven from 'raven';
 import methodOverride from 'method-override';
 import cookieParser from 'cookie-parser';
@@ -18,23 +18,22 @@ import { sentryClient } from './components/errors';
 const app = express();
 
 if (config.env === 'production' || config.env === 'staging') {
-    app.use(raven.middleware.express.requestHandler(sentryClient));
+    app.use(raven.requestHandler(sentryClient));
     sentryClient.patchGlobal(() => {
         process.exit(1);
     });
 }
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(urlencoded({ extended: false }));
+app.use(json());
 app.use(methodOverride());
 app.use(cookieParser());
 app.use(cors());
-app.use(morgan('dev'));
+app.use(morgan('combined'));
 
-if (app.get('env') === 'development') {
+if (config.nodeEnv === 'development') {
     app.use(errorHandler());
 }
-
 
 app.use('/', routes);
 

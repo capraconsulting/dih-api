@@ -76,6 +76,32 @@ exports.GENDERS = {
 };
 
 /**
+ * Gnders that a user can have
+ * @type {object}
+ * @property {string} MALE - Male
+ * @property {string} FEMALE - Female
+ */
+exports.VALID_ACTIONS = {
+    ACTION_CREATE: 'create',
+    ACTION_UPDATE: 'update',
+    ACTION_DELETE: 'delete'
+};
+
+/**
+ * Gnders that a user can have
+ * @type {object}
+ * @property {string} MALE - Male
+ * @property {string} FEMALE - Female
+ */
+exports.VALID_SOURCES = {
+    USERS: 'users',
+    DESTINATIONS: 'destinations',
+    TRIPS: 'trips',
+    MAIL_TEMPLATE: 'mailTemplates'
+};
+
+
+/**
  * The standard email templates used for new destinatons
  * @type {object}
  * @property {string} TRIP_STATUS_PENDING - Template used when trip status is set to pending
