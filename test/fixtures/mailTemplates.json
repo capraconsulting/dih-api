@@ -16,5 +16,11 @@
 		"data": {
 			"html": "Sadly you've been rejected as a volunteer."
 		}
+	},
+	{
+		"model": "MailTemplate",
+		"data": {
+			"html": "Sadly you've been rejected as a volunteer."
+		}
 	}
 ]

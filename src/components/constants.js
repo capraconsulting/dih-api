@@ -61,7 +61,7 @@ exports.TRIP_STATUSES = {
     CLOSED: 'CLOSED',
     PRESENT: 'PRESENT',
     LEFT: 'LEFT',
-    NOSHOW: 'NO SHOW'
+    NOSHOW: 'NOSHOW'
 };
 
 /**
@@ -132,5 +132,7 @@ exports.STANDARD_MAIL_TEMPLATES = {
     TRIP_STATUS_REJECTED: `Hi,
     <p>Unfortunately, we do not need volunteers in the period you requested.
     If you have the opportunity to travel to another destination or in another period,
-    we appreciate if you would request a new travel at our page. </p>`
+    we appreciate if you would request a new travel at our page. </p>`,
+    TRIP_STATUS_LEFT: `Hi,
+    <p>We can now see that you have left your destination. </p>`
 };
