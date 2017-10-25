@@ -64,6 +64,12 @@ export default function (sequelize, DataTypes) {
                         allowNull: true
                     }
                 });
+                Destination.belongsTo(models.MailTemplate, {
+                    foreignKey: {
+                        name: 'leftStatusMailTemplateId',
+                        allowNull: true
+                    }
+                });
                 Destination.belongsToMany(models.User,
                     { through: models.DestinationCoordinator },
                     { foreignKey: 'destinationId' });
@@ -124,12 +130,17 @@ export default function (sequelize, DataTypes) {
                             }),
                             db.MailTemplate.create({
                                 html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_REJECTED
+                            }),
+                            db.MailTemplate.create({
+                                html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_LEFT
                             })
                         ])
-                        .spread((pending, accepted, rejected) => {
+                        .spread((pending, accepted, rejected, left) => {
                             destination.pendingStatusMailTemplateId = pending.id;
                             destination.acceptedStatusMailTemplateId = accepted.id;
                             destination.rejectedStatusMailTemplateId = rejected.id;
+                            destination.leftStatusMailTemplateId = left.id;
+
                             return destination.save();
                         })
                     );
