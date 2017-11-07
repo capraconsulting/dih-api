@@ -59,6 +59,18 @@ To enter some test data into your database, run `yarn load`. It will give you so
 
 All these users have the password `password`.
 
+## How to test data model migrations
+When you've added your migration, do the following:
+
+1. Delete the old dataabase, and restart the app from a branch that does not have your changed data model. This creates the previous data model for you.
+2. Switch to the branch with the new data model and migration.
+3. Build with `npm run build`
+4. Run the build with `PG_URL` set to your database, and `NODE_ENV=production`. You run the built code with `npm start`
+5. Check for errors, and see if the data model was updated in the database. If not, you'll have to fix issues and start from step number 1 again.
+
+I.e. you create the old database, run your migration as it would run in production, and see that the migrations works.
+
+
 ## Tests
 
 ### Single run
