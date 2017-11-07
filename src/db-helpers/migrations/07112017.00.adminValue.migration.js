@@ -23,5 +23,4 @@ module.exports = {
     down(migration) {
         return migration.dropTable('adminValue');
     }
-
 };
