@@ -8,12 +8,12 @@ module.exports = {
                 defaultValue: ''
             },
             description: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
                 allowNull: false,
                 defaultValue: ''
             },
             value: {
-                type: DataTypes.STRING,
+                type: DataTypes.TEXT,
                 allowNull: false,
                 defaultValue: ''
             }

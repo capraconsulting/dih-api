@@ -8,12 +8,12 @@ export default function (sequelize, DataTypes) {
             defaultValue: ''
         },
         description: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false,
             defaultValue: ''
         },
         value: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: false,
             defaultValue: ''
         }
