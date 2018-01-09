@@ -52,7 +52,7 @@ export function createDefaultAdmin(password) {
     .then(user => {
         user.updatePassword(password);
     })
-    .catch(db.sequelize.UniqueConstraintError); // In case it's already added
+    .catch(db.sequelize.UniqueConstraintError, () => {}); // In case it's already added
 }
 
 /**

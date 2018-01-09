@@ -6,6 +6,9 @@ import Sequelize from 'sequelize';
 import db from '../models';
 import * as errors from '../components/errors';
 import { USER_ROLES } from '../components/constants';
+import * as paginationHelperMethods from '../components/paginationHelperMethods';
+
+const DATA_LIST_LIMIT = paginationHelperMethods.DATA_LIST_LIMIT;
 
 /**
  * list - List trips that qualify query
@@ -20,9 +23,12 @@ export function list(req, res, next) {
     if (!db.Trip.validateQuery(req.query)) {
         throw new errors.UriValidationError();
     }
-
+    const lastPage = req.query.page;
+    const offsetValue = lastPage * DATA_LIST_LIMIT;
     db.Trip.getQueryObject(req)
     .then(query => db.Trip.findAll({
+        offset: offsetValue || 0,
+        limit: DATA_LIST_LIMIT,
         where: query,
         include: [{
             model: db.User,
@@ -34,7 +40,7 @@ export function list(req, res, next) {
             model: db.Destination
         }]
     }))
-    .then(res.json.bind(res))
+    .then(result => res.json(paginationHelperMethods.createPagedResponse(result, lastPage)))
     .catch(next);
 }
 
