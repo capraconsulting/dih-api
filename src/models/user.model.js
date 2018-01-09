@@ -136,19 +136,6 @@ export default function (sequelize, DataTypes) {
                 return `${this.firstname} ${this.lastname}`;
             }
         },
-        classMethods: {
-            associate(models) {
-                User.hasMany(models.Trip);
-                User.belongsToMany(models.Destination,
-                    { through: models.DestinationCoordinator },
-                    { foreignKey: 'userId' },
-                );
-            },
-            invite(body) {
-                return User.create(body)
-                .then(user => user.sendInvite());
-            }
-        },
         hooks: {
             ...auditLogger,
             beforeUpdate: [
@@ -166,49 +153,51 @@ export default function (sequelize, DataTypes) {
                     return Promise.resolve();
                 }
             ]
-        },
-        instanceMethods: {
-            authenticate(password) {
-                return bcrypt.compareAsync(password, this.hash);
-            },
-            toJSON() {
-                const user = this.get({ plain: true });
-                delete user.hash;
-                return user;
-            },
-            createJwt(additionalPayload) {
-                return createJwt({ ...this.toJSON(), ...additionalPayload });
-            },
-            sendDeactivationInfo() {
-                return mail.sendDeactivationInfo(this);
-            },
-            sendInvite() {
-                const token = this.createJwt({ setPassword: true });
-                return mail.sendInvite(this, token);
-            },
-            sendResetPasswordEmail() {
-                const token = this.createJwt({ setPassword: true });
-                return mail.sendResetPasswordEmail(this, token);
-            },
-            updatePassword(password) {
-                if (!password || password.length < 8) {
-                    throw new CustomValidationError('not a valid password');
-                }
-                return bcrypt.genSaltAsync()
-                    .then(salt => bcrypt.hashAsync(password, salt))
-                    .then(hash => {
-                        this.hash = hash;
-                        return this.save();
-                    });
-            },
-            sendDestinationAction(tripId, tripStatus, destination, mailContent) {
-                const token = this.createJwt();
-                return mail.sendDestinationAction(tripId, tripStatus, this, mailContent, token);
-            },
-            sendDestinationInfo(tripStatus, destination, mailContent) {
-                return mail.sendDestinationInfo(tripStatus, this, mailContent);
-            }
         }
     });
+    User.prototype.authenticate = password => bcrypt.compareAsync(password, this.hash);
+    User.prototype.toJSON = () => {
+        const user = this.get({ plain: true });
+        delete user.hash;
+        return user;
+    };
+    User.prototype.createJwt = additionalPayload =>
+        createJwt({ ...this.toJSON(), ...additionalPayload });
+    User.prototype.sendDeactivationInfo = () => mail.sendDeactivationInfo(this);
+    User.prototype.sendInvite = () => {
+        const token = this.createJwt({ setPassword: true });
+        return mail.sendInvite(this, token);
+    };
+    User.prototype.sendResetPasswordEmail = () => {
+        const token = this.createJwt({ setPassword: true });
+        return mail.sendResetPasswordEmail(this, token);
+    };
+    User.prototype.updatePassword = password => {
+        if (!password || password.length < 8) {
+            throw new CustomValidationError('not a valid password');
+        }
+        return bcrypt.genSaltAsync()
+            .then(salt => bcrypt.hashAsync(password, salt))
+            .then(hash => {
+                this.hash = hash;
+                return this.save();
+            });
+    };
+    User.prototype.sendDestinationAction = (tripId, tripStatus, destination, mailContent) => {
+        const token = this.createJwt();
+        return mail.sendDestinationAction(tripId, tripStatus, this, mailContent, token);
+    };
+    User.prototype.sendDestinationInfo = (tripStatus, destination, mailContent) =>
+        mail.sendDestinationInfo(tripStatus, this, mailContent);
+
+    User.associate = models => {
+        User.hasMany(models.Trip);
+        User.belongsToMany(models.Destination,
+            { through: models.DestinationCoordinator },
+            { foreignKey: 'userId' },
+        );
+    };
+    User.invite = body => User.create(body).then(user => user.sendInvite());
+
     return User;
 }

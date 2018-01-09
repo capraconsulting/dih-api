@@ -9,7 +9,7 @@ const logging = config.nodeEnv === 'development' ? console.log : false; // eslin
 const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 // create sequelize instance with continuation local storage
-Sequelize.cls = namespace;
+Sequelize.useCLS(namespace);
 const sequelize = new Sequelize(config.pgUrl, { logging });
 
 

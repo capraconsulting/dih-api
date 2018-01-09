@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 import { validateQuery } from '../components/queryValidator';
 import auditLogger from '../components/auditLogger';
+import { cleanQueryObjectForSequelizeFindOperation } from '../components/paginationHelperMethods';
 import { TRAVEL_METHODS, TRIP_STATUSES, USER_ROLES, STANDARD_MAIL_TEMPLATES }
 from '../components/constants';
 import db from './';
@@ -49,53 +50,6 @@ export default function (sequelize, DataTypes) {
             allowNull: true
         }
     }, {
-        classMethods: {
-            associate(models) {
-                Trip.belongsTo(models.User, {
-                    foreignKey: {
-                        name: 'userId',
-                        allowNull: false
-                    }
-                });
-                Trip.belongsTo(models.Destination, {
-                    foreignKey: {
-                        name: 'destinationId',
-                        allowNull: true
-                    }
-                });
-            },
-            validateQuery(query) {
-                return validateQuery(query, ALLOWED_QUERY_PARAMS);
-            },
-            isValidReqBody(body) {
-                return body.destinationId;
-            },
-            getQueryObject(req) {
-                return new Promise(resolve => {
-                    if (req.user.role === USER_ROLES.USER) {
-                        return resolve({
-                            userId: req.user.id
-                        });
-                    } else if (req.user.role === USER_ROLES.MODERATOR) {
-                        return db.User.findOne({
-                            where: req.user.id
-                        })
-                        .then(coordinator => coordinator.getDestinations())
-                        .then(objects => objects.map(object => object.id))
-                        .then(destinationIds => {
-                            resolve({
-                                $or: [{
-                                    destinationId: {
-                                        in: destinationIds
-                                    } },
-                                { userId: req.user.id }
-                                ]
-                            });
-                        });
-                    } else if (req.user.role === USER_ROLES.ADMIN) return resolve(req.query);
-                });
-            }
-        },
         hooks: {
             ...auditLogger,
             beforeUpdate: [
@@ -118,55 +72,95 @@ export default function (sequelize, DataTypes) {
                 }
             ],
             afterCreate: trip => trip.userInfoToUser(trip.status)
-        },
-        instanceMethods: {
-            userActionToUser(tripId, tripStatus) {
-                return Promise.all([
-                    db.Destination.findById(this.destinationId),
-                    db.User.findById(this.userId)
-                ])
-                .spread((destination, user) =>
-                    db.MailTemplate
-                    .findById(destination[`${tripStatus.toLowerCase()}StatusMailTemplateId`])
-                    .then(template => {
-                        if (template) {
-                            user.sendDestinationAction(tripId, tripStatus,
-                                destination, template.html);
-                        }
-                    })
-                );
-            },
-            userInfoToUser(tripStatus) {
-                return Promise.all([
-                    db.Destination.findById(this.destinationId),
-                    db.User.findById(this.userId)
-                ])
-                .spread((destination, user) => {
-                    if (destination) {
-                        db.MailTemplate
-                        .findById(destination[`${tripStatus.toLowerCase()}StatusMailTemplateId`])
-                        .then(template => {
-                            if (template) {
-                                user.sendDestinationInfo(tripStatus,
-                                destination, template.html);
-                            }
-                        });
-                    } else if (!destination && tripStatus === TRIP_STATUSES.PENDING) {
-                        user.sendDestinationInfo(TRIP_STATUSES.PENDING,
-                        destination, STANDARD_MAIL_TEMPLATES.TRIP_STATUS_PENDING);
-                    }
-                }
-                );
-            },
-            hasTravelInfo() {
-                if (this.travelMethod === TRAVEL_METHODS.PLANE) {
-                    return this.flightNumber && this.departureAirport;
-                } else if (this.travelMethod === TRAVEL_METHODS.OTHER) {
-                    return this.otherTravelInformation;
-                }
-                return false;
-            }
         }
     });
+
+    Trip.associate = models => {
+        Trip.belongsTo(models.User, {
+            foreignKey: {
+                name: 'userId',
+                allowNull: false
+            }
+        });
+        Trip.belongsTo(models.Destination, {
+            foreignKey: {
+                name: 'destinationId',
+                allowNull: true
+            }
+        });
+    };
+    Trip.validateQuery = query => validateQuery(query, ALLOWED_QUERY_PARAMS);
+    Trip.isValidReqBody = body => body.destinationId;
+    Trip.getQueryObject = req => {
+        const query = cleanQueryObjectForSequelizeFindOperation(req.query);
+        return new Promise(resolve => {
+            if (req.user.role === USER_ROLES.USER) {
+                return resolve({
+                    userId: req.user.id
+                });
+            } else if (req.user.role === USER_ROLES.MODERATOR) {
+                return db.User.findOne({
+                    where: req.user.id
+                })
+                .then(coordinator => coordinator.getDestinations())
+                .then(objects => objects.map(object => object.id))
+                .then(destinationIds => {
+                    resolve({
+                        $or: [{
+                            destinationId: {
+                                in: destinationIds
+                            } },
+                        { userId: req.user.id }
+                        ]
+                    });
+                });
+            } else if (req.user.role === USER_ROLES.ADMIN) return resolve(query);
+        });
+    };
+    Trip.prototype.userActionToUser = (tripId, tripStatus) => (
+        Promise.all([
+            db.Destination.findById(this.destinationId),
+            db.User.findById(this.userId)
+        ])
+        .spread((destination, user) =>
+            db.MailTemplate
+            .findById(destination[`${tripStatus.toLowerCase()}StatusMailTemplateId`])
+            .then(template => {
+                if (template) {
+                    user.sendDestinationAction(tripId, tripStatus,
+                        destination, template.html);
+                }
+            })
+        )
+    );
+    Trip.prototype.userInfoToUser = (tripStatus) => (
+        Promise.all([
+            db.Destination.findById(this.destinationId),
+            db.User.findById(this.userId)
+        ])
+        .spread((destination, user) => {
+            if (destination) {
+                db.MailTemplate
+                .findById(destination[`${tripStatus.toLowerCase()}StatusMailTemplateId`])
+                .then(template => {
+                    if (template) {
+                        user.sendDestinationInfo(tripStatus,
+                        destination, template.html);
+                    }
+                });
+            } else if (!destination && tripStatus === TRIP_STATUSES.PENDING) {
+                user.sendDestinationInfo(TRIP_STATUSES.PENDING,
+                destination, STANDARD_MAIL_TEMPLATES.TRIP_STATUS_PENDING);
+            }
+        })
+    );
+    Trip.prototype.hasTravelInfo = () => {
+        if (this.travelMethod === TRAVEL_METHODS.PLANE) {
+            return this.flightNumber && this.departureAirport;
+        } else if (this.travelMethod === TRAVEL_METHODS.OTHER) {
+            return this.otherTravelInformation;
+        }
+        return false;
+    };
     return Trip;
 }

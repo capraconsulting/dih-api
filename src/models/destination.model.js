@@ -42,106 +42,99 @@ export default function (sequelize, DataTypes) {
             ...auditLogger,
             beforeCreate: createMailTemplatesForDestination,
             beforeSave: createMailTemplatesForDestination
-        },
-        classMethods: {
-            associate(models) {
-                Destination.hasMany(models.Trip);
-                Destination.belongsTo(models.MailTemplate, {
-                    foreignKey: {
-                        name: 'acceptedStatusMailTemplateId',
-                        allowNull: true
-                    }
-                });
-                Destination.belongsTo(models.MailTemplate, {
-                    foreignKey: {
-                        name: 'rejectedStatusMailTemplateId',
-                        allowNull: true
-                    }
-                });
-                Destination.belongsTo(models.MailTemplate, {
-                    foreignKey: {
-                        name: 'pendingStatusMailTemplateId',
-                        allowNull: true
-                    }
-                });
-                Destination.belongsToMany(models.User,
-                    { through: models.DestinationCoordinator },
-                    { foreignKey: 'destinationId' });
-            },
-            findOneAndIncludeActiveTripCount(destId) {
-                // Sequelize getterMethods does not support Promises,
-                // so these custom find methods are used when one wants to
-                // include certain calculated fields.
-                return Destination.findOne({
-                    where: {
-                        id: destId
-                    },
-                    include: [{
-                        model: db.User
-                    }]
-                })
-                .then(destination => {
-                    if (!destination) return Promise.reject(null);
-                    return [destination.toJSON(), destination.countTrips({
-                        where: {
-                            status: TRIP_STATUSES.PRESENT
-                        }
-                    })];
-                })
-                .spread((destination, countOfActiveVolunteers) =>
-                    ({ ...destination, countOfActiveVolunteers })
-                );
-            },
-            findAllAndIncludeActiveTripCount(query) {
-                return Destination.findAll({
-                    where: query,
-                    include: [{
-                        model: db.User
-                    }]
-                })
-                .then(destinations =>
-                    Promise.map(destinations, destination =>
-                        destination.countTrips({
-                            where: {
-                                status: TRIP_STATUSES.PRESENT
-                            }
-                        })
-                        .then(countOfActiveVolunteers =>
-                            ({ ...destination.toJSON(), countOfActiveVolunteers })
-                        )
-                    )
-                );
-            },
-            createWithMailTemplates(body) {
-                return db.Destination.create(body)
-                    .then(destination =>
-                        Promise.all([
-                            db.MailTemplate.create({
-                                html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_PENDING
-                            }),
-                            db.MailTemplate.create({
-                                html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_ACCEPTED
-                            }),
-                            db.MailTemplate.create({
-                                html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_REJECTED
-                            })
-                        ])
-                        .spread((pending, accepted, rejected) => {
-                            destination.pendingStatusMailTemplateId = pending.id;
-                            destination.acceptedStatusMailTemplateId = accepted.id;
-                            destination.rejectedStatusMailTemplateId = rejected.id;
-                            return destination.save();
-                        })
-                    );
-            }
-        },
-        instanceMethods: {
-            addCoordinators(users) {
-                return Promise.map(users, user => this.addUsers([user.userId],
-                    { startDate: user.startDate, endDate: user.endDate })
-                );
-            }
         }
     });
+    Destination.associate = (models) => {
+        Destination.hasMany(models.Trip);
+        Destination.belongsTo(models.MailTemplate, {
+            foreignKey: {
+                name: 'acceptedStatusMailTemplateId',
+                allowNull: true
+            }
+        });
+        Destination.belongsTo(models.MailTemplate, {
+            foreignKey: {
+                name: 'rejectedStatusMailTemplateId',
+                allowNull: true
+            }
+        });
+        Destination.belongsTo(models.MailTemplate, {
+            foreignKey: {
+                name: 'pendingStatusMailTemplateId',
+                allowNull: true
+            }
+        });
+        Destination.belongsToMany(models.User,
+            { through: models.DestinationCoordinator },
+            { foreignKey: 'destinationId' });
+    };
+    Destination.findOneAndIncludeActiveTripCount = destId =>
+        // Sequelize getterMethods does not support Promises,
+        // so these custom find methods are used when one wants to
+        // include certain calculated fields.
+        Destination.findOne({
+            where: {
+                id: destId
+            },
+            include: [{
+                model: db.User
+            }]
+        })
+        .then(destination => {
+            if (!destination) return Promise.reject(null);
+            return [destination.toJSON(), destination.countTrips({
+                where: {
+                    status: TRIP_STATUSES.PRESENT
+                }
+            })];
+        })
+        .spread((destination, countOfActiveVolunteers) =>
+            ({ ...destination, countOfActiveVolunteers })
+        );
+    Destination.findAllAndIncludeActiveTripCount = query =>
+        Destination.findAll({
+            where: query,
+            include: [{
+                model: db.User
+            }]
+        })
+        .then(destinations =>
+            Promise.map(destinations, destination =>
+                destination.countTrips({
+                    where: {
+                        status: TRIP_STATUSES.PRESENT
+                    }
+                })
+                .then(countOfActiveVolunteers =>
+                    ({ ...destination.toJSON(), countOfActiveVolunteers })
+                )
+            )
+        );
+    Destination.createWithMailTemplates = body =>
+        db.Destination.create(body)
+            .then(destination =>
+                Promise.all([
+                    db.MailTemplate.create({
+                        html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_PENDING
+                    }),
+                    db.MailTemplate.create({
+                        html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_ACCEPTED
+                    }),
+                    db.MailTemplate.create({
+                        html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_REJECTED
+                    })
+                ])
+                .spread((pending, accepted, rejected) => {
+                    destination.pendingStatusMailTemplateId = pending.id;
+                    destination.acceptedStatusMailTemplateId = accepted.id;
+                    destination.rejectedStatusMailTemplateId = rejected.id;
+                    return destination.save();
+                })
+            );
+    Destination.prototype.addCoordinators = users =>
+        Promise.map(users, user => this.addUsers([user.userId],
+            { startDate: user.startDate, endDate: user.endDate })
+        );
+
     return Destination;
 }
