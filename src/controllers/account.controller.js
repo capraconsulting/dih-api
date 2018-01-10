@@ -75,7 +75,7 @@ export function update(req, res, next) {
         }
     })
     .then(user => {
-        if (!user) throw new errors.ResourceNotFoundError('user');
+        if (!user) throw new errors.ResourceNotFoundError('trip');
         return user.update(req.body);
     })
     .then(() => res.sendStatus(204))
