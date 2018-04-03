@@ -7,7 +7,7 @@ const router = express.Router();
 const controller = new AdminValueController();
 
 router.post('/', authorizeAdministrator, controller.create);
-router.put('/', authorizeAdministrator, controller.update);
+router.put('/:id', authorizeAdministrator, controller.update);
 router.get('/', controller.list);
 router.get('/:id', controller.retrieve);
 
