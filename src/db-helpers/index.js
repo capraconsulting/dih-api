@@ -65,7 +65,8 @@ export function createDefaultAdmin(password) {
 export function createMailTemplatesForDestination(destination) {
     if (!destination.pendingStatusMailTemplateId && // Ensures working migrations
         !destination.acceptedStatusMailTemplateId && // and tests
-        !destination.rejectedStatusMailTemplateId) {
+        !destination.rejectedStatusMailTemplateId &&
+        !destination.leftStatusMailTemplateId) {
         return Promise.resolve();
     }
     return Promise.all([ // bulkCreate does not return inserted elements
@@ -77,13 +78,17 @@ export function createMailTemplatesForDestination(destination) {
         }),
         db.MailTemplate.create({
             html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_REJECTED
+        }),
+        db.MailTemplate.create({
+            html: STANDARD_MAIL_TEMPLATES.TRIP_STATUS_LEFT
         })
     ])
-    .spread((mt1, mt2, mt3) => {
+    .spread((mt1, mt2, mt3, mt4) => {
         // Eslind disabled due to reassignment
         // Must reassign as it is the instance to be created
         destination.pendingStatusMailTemplateId = mt1.id; // eslint-disable-line
         destination.acceptedStatusMailTemplateId = mt2.id; // eslint-disable-line
         destination.rejectedStatusMailTemplateId = mt3.id; // eslint-disable-line
+        destination.leftStatusMailTemplateId = mt4.id; // eslint-disable-line
     });
 }

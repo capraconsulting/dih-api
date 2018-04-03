@@ -24,6 +24,7 @@ export function list(req, res, next) {
     db.Trip.getQueryObject(req)
     .then(query => db.Trip.findAll({
         where: query,
+        limit: 1000,
         include: [{
             model: db.User,
             where: { isActive: true },

@@ -6,6 +6,7 @@
             "pendingStatusMailTemplateId": 1,
             "acceptedStatusMailTemplateId": 2,
             "rejectedStatusMailTemplateId": 3,
+            "leftStatusMailTemplateId": 4,
             "users": [
                 {
                     "id" :3,
@@ -23,7 +24,8 @@
             "name" : "Lier",
             "pendingStatusMailTemplateId": 1,
             "acceptedStatusMailTemplateId": 2,
-            "rejectedStatusMailTemplateId": 3
+            "rejectedStatusMailTemplateId": 3,
+            "leftStatusMailTemplateId": 4
         }
     },
 
@@ -33,7 +35,8 @@
             "name" : "Sandnessjoen",
             "pendingStatusMailTemplateId": 1,
             "acceptedStatusMailTemplateId": 2,
-            "rejectedStatusMailTemplateId": 3
+            "rejectedStatusMailTemplateId": 3,
+            "leftStatusMailTemplateId": 4
         }
     },
 
@@ -43,7 +46,8 @@
             "name" : "Asker",
             "pendingStatusMailTemplateId": 1,
             "acceptedStatusMailTemplateId": 2,
-            "rejectedStatusMailTemplateId": 3
+            "rejectedStatusMailTemplateId": 3,
+            "leftStatusMailTemplateId": 4
         }
     },
 
@@ -53,7 +57,8 @@
             "name" : "YtreEnebakk",
             "pendingStatusMailTemplateId": 1,
             "acceptedStatusMailTemplateId": 2,
-            "rejectedStatusMailTemplateId": 3
+            "rejectedStatusMailTemplateId": 3,
+            "leftStatusMailTemplateId": 4
         }
     }
 ]
