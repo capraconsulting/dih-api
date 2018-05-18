@@ -4,7 +4,10 @@ __Build status:__
 
 | `dev` | `master`|
 | :--  |:--|
-|[![CircleCI](https://circleci.com/gh/capraconsulting/dih-api/tree/dev.svg?style=shield&circle-token=31ea42d745bf7499e768623c89901f32adadcf9b)](https://circleci.com/gh/capraconsulting/dih-api/tree/dev) [![Coverage Status](https://coveralls.io/repos/github/capraconsulting/dih-api/badge.svg?branch=dev&t=mBsoI5)](https://coveralls.io/github/capraconsulting/dih-api?branch=dev) [![Documentation Coverage Status](http://docs.dih.capra.me/badge.svg)](http://docs.dih.capra.me/)| [![CircleCI](https://circleci.com/gh/capraconsulting/dih-api/tree/master.svg?style=shield&circle-token=31ea42d745bf7499e768623c89901f32adadcf9b)](https://circleci.com/gh/capraconsulting/dih-api/tree/master) [![Coverage Status](https://coveralls.io/repos/github/capraconsulting/dih-api/badge.svg?branch=master&t=mBsoI5)](https://coveralls.io/github/capraconsulting/dih-api?branch=master) [![Documentation Coverage Status](http://docs.dih.capra.me/badge.svg)](http://docs.dih.capra.me/)||
+|[![CircleCI](https://circleci.com/gh/dropsintheocean/dih-api/tree/dev.svg?style=svg&circle-token=31ea42d745bf7499e768623c89901f32adadcf9b)](https://circleci.com/gh/dropsintheocean/dih-api/tree/dev) [![Coverage Status](https://coveralls.io/repos/github/capraconsulting/dih-api/badge.svg?branch=dev&t=mBsoI5)](https://coveralls.io/github/capraconsulting/dih-api?branch=dev) [![Documentation Coverage Status](http://docs.dih.capra.me/badge.svg)](http://docs.dih.capra.me/)|[![CircleCI](https://circleci.com/gh/dropsintheocean/dih-api/tree/master.svg?style=svg&circle-token=31ea42d745bf7499e768623c89901f32adadcf9b)](https://circleci.com/gh/dropsintheocean/dih-api/tree/master) [![Coverage Status](https://coveralls.io/repos/github/capraconsulting/dih-api/badge.svg?branch=master&t=mBsoI5)](https://coveralls.io/github/capraconsulting/dih-api?branch=master) [![Documentation Coverage Status](http://docs.dih.capra.me/badge.svg)](http://docs.dih.capra.me/)||
+
+## Contribute
+Dråpen i Havet/A Drop in the Ocean is a volunteer organization. If you want to contribute, take a look at the issues or contact the head of the organization Trude, at trude [@] drapenihavet [dot] no.
 
 ## Workflow
 
