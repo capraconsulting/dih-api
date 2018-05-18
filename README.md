@@ -92,6 +92,36 @@ We have continuous deployment with [Circle CI](http://circleci.com), which build
 * The `dev`-branch is the main branch, and has CI to our staging environment.
 * The `master`-branch is the stable branch, and has CI to our production environment.
 
+## Inline documentation
+
+We use jsdoc to document modules and methods. You can find the generated documentation here, http://docs.dih.capra.me/, and of course also in the code.
+
+Det betyr at du i koden vår finner et minimum av dokumentasjon for metoder på følgende format:
+
+That means that you'll find a minimum of the following as documnetation for methods:
+ 
+    /**
+     * methodName - method description
+     * 
+     * @function methodName
+     * @memberOf moduleType/moduleName
+     * @param {Type} paramName1 - paramName1 description
+     * @param {Type} paramName2 - paramName2 description
+     * @return {Type} - Description of return value
+     */
+
+
+For modules we document in the following way:
+
+    /**
+     * Module description
+     * @module type/name
+     */
+
+`moduleType`is e.g. `model`, `controller` or `component`.
+
+When submitting pull requests or doing changes, please make sure you maintain the documentation format and quality - or rather increase it.
+
 ## API and data model
 
 ### /trips
@@ -362,8 +392,7 @@ Also virtual field `fullName`
 | POST    |  /        | user login                                               | NO                                           | email + password | 200                     | object containing jwt   |
 | POST    | /password | update password given the jwt used has right premissions | YES ( jwt needs field setPassword = true )   | password         | <span>200</span>        | object containing jwt   |
 
-### 
-/users
+### /users
 
 <table>
 <colgroup>
