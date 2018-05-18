@@ -157,7 +157,7 @@ export default function (sequelize, DataTypes) {
                     through: models.DestinationCoordinator
                 }, {
                     foreignKey: 'userId'
-                }, );
+                });
             },
             invite(body) {
                 return User.create(body)
