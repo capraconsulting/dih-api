@@ -1,26 +1,35 @@
 /**
-* User model
-* @module models/user
-*/
-import { randomBytes } from 'crypto';
+ * User model
+ * @module models/user
+ */
+import {
+    randomBytes
+} from 'crypto';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 import Promise from 'bluebird';
 import auditLogger from '../components/auditLogger';
-import { USER_ROLES, GENDERS } from '../components/constants';
-import { CustomValidationError } from '../components/errors';
+import {
+    USER_ROLES,
+    GENDERS
+} from '../components/constants';
+import {
+    CustomValidationError
+} from '../components/errors';
 import * as mail from '../components/mail';
-import { createJwt } from '../components/auth';
+import {
+    createJwt
+} from '../components/auth';
 
 Promise.promisifyAll(bcrypt);
 
 /**
-* User model - create and export the database model for the user
-* including all assosiations and classmethods assiciated with this model.
-* @memberof  module:models/user
-* @param  {Object} sequelize description
-* @param  {Object} DataTypes description
-*/
+ * User model - create and export the database model for the user
+ * including all assosiations and classmethods assiciated with this model.
+ * @memberof  module:models/user
+ * @param  {Object} sequelize description
+ * @param  {Object} DataTypes description
+ */
 export default function (sequelize, DataTypes) {
     const User = sequelize.define('user', {
         email: {
@@ -119,6 +128,11 @@ export default function (sequelize, DataTypes) {
             defaultValue: false,
             allowNull: false
         },
+        readPrivacyTerms: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false
+        },
         hash: DataTypes.STRING,
         role: {
             type: DataTypes.ENUM,
@@ -139,14 +153,15 @@ export default function (sequelize, DataTypes) {
         classMethods: {
             associate(models) {
                 User.hasMany(models.Trip);
-                User.belongsToMany(models.Destination,
-                    { through: models.DestinationCoordinator },
-                    { foreignKey: 'userId' },
-                );
+                User.belongsToMany(models.Destination, {
+                    through: models.DestinationCoordinator
+                }, {
+                    foreignKey: 'userId'
+                }, );
             },
             invite(body) {
                 return User.create(body)
-                .then(user => user.sendInvite());
+                    .then(user => user.sendInvite());
             }
         },
         hooks: {
@@ -155,13 +170,13 @@ export default function (sequelize, DataTypes) {
                 user => {
                     if (user.changed('isActive') && !user.isActive) {
                         return user.sendDeactivationInfo() // Inform user
-                        .then(() => {
-                            // Set e-mail to something random so user can same email later
-                            const randomStringBeforeAt = randomBytes(16).toString('hex');
-                            const randomStringAfterAt = randomBytes(16).toString('hex');
-                            user.email = `${randomStringBeforeAt}@${randomStringAfterAt}.com`; // eslint-disable-line
-                            return user;
-                        });
+                            .then(() => {
+                                // Set e-mail to something random so user can same email later
+                                const randomStringBeforeAt = randomBytes(16).toString('hex');
+                                const randomStringAfterAt = randomBytes(16).toString('hex');
+                                user.email = `${randomStringBeforeAt}@${randomStringAfterAt}.com`; // eslint-disable-line
+                                return user;
+                            });
                     }
                     return Promise.resolve();
                 }
@@ -172,22 +187,30 @@ export default function (sequelize, DataTypes) {
                 return bcrypt.compareAsync(password, this.hash);
             },
             toJSON() {
-                const user = this.get({ plain: true });
+                const user = this.get({
+                    plain: true
+                });
                 delete user.hash;
                 return user;
             },
             createJwt(additionalPayload) {
-                return createJwt({ ...this.toJSON(), ...additionalPayload });
+                return createJwt({ ...this.toJSON(),
+                    ...additionalPayload
+                });
             },
             sendDeactivationInfo() {
                 return mail.sendDeactivationInfo(this);
             },
             sendInvite() {
-                const token = this.createJwt({ setPassword: true });
+                const token = this.createJwt({
+                    setPassword: true
+                });
                 return mail.sendInvite(this, token);
             },
             sendResetPasswordEmail() {
-                const token = this.createJwt({ setPassword: true });
+                const token = this.createJwt({
+                    setPassword: true
+                });
                 return mail.sendResetPasswordEmail(this, token);
             },
             updatePassword(password) {
