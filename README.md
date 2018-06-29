@@ -62,6 +62,9 @@ To enter some test data into your database, run `yarn load`. It will give you so
 
 All these users have the password `password`.
 
+
+To enter some test data into your database, run `npm run load`.
+
 ### How to test data model migrations
 When you've added your migration, do the following:
 
@@ -72,8 +75,6 @@ When you've added your migration, do the following:
 5. Check for errors, and see if the data model was updated in the database. If not, you'll have to fix issues and start from step number 1 again.
 
 I.e. you create the old database, run your migration as it would run in production, and see that the migrations works.
-
-To enter some test data into your database, run `npm run load`.
 
 ## Tests
 
