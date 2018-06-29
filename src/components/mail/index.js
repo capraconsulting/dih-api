@@ -8,13 +8,19 @@ import Promise from 'bluebird';
 import hbs from 'nodemailer-express-handlebars';
 import ses from 'nodemailer-ses-transport';
 import path from 'path';
-import { handleError } from '../errors';
+import {
+    handleError
+} from '../errors';
 import config from '../../config';
-import { TRIP_STATUSES } from '../constants';
+import {
+    TRIP_STATUSES
+} from '../constants';
 
 let transporter;
-const transport = config.nodeEnv === 'development'
-    ? config.smtpUrl : ses({ region: config.region });
+const transport = config.nodeEnv === 'development' ?
+    config.smtpUrl : ses({
+        region: config.region
+    });
 
 const options = hbs({
     viewEngine: handlebars.create({}),
@@ -173,20 +179,25 @@ export function sendDestinationInfo(tripStatus, user, mailContent) {
 export function sendDeactivationInfo(user) {
     const content = `Dear, ${user.firstname} ${user.lastname}.
 <p>
-You've pressed the button to delete your profile with us. If you at any time
-want to come back, just reregister at our
-<a href="http://app.drapenihavet.no">website</a>. </br>
-If you didn't delete your profile, please send us an
-<a href="mailto:post@drapenihavet.no">e-mail</a> as soon as possible.
+You have chosen to delete your personal profile as volunteer with A Drop in the Ocean.
+According to our <a href="https://www.drapenihavet.no/en/privacy/">Privacy Policy</a>, we will continue storing a few data not traceable to you as a
+person. Thank you for being with us. If you in the future will register with us again, you have
+to create your profile from the beginning.
 </p>
-Thanks!`;
+
+<p>Best regards
+A Drop in the Ocean
+post@drapenihavet.no </p>
+`;
     const mailOptions = {
         to: user.email,
         from: `A Drop in the Ocean <${config.email}>`,
         replyTo: config.email,
         subject: 'Your profile has been deleted',
         template: 'info',
-        context: { content }
+        context: {
+            content
+        }
     };
     return transporter.sendMailAsync(mailOptions)
         .then(() => user)
@@ -219,6 +230,8 @@ export function sendCustomMail(recipient, mailData) {
         .then(() => recipient)
         .catch(error => {
             handleError(error);
-            return Promise.reject({ ...recipient, error: error.cause.message });
+            return Promise.reject({ ...recipient,
+                error: error.cause.message
+            });
         });
 }
