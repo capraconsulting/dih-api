@@ -12,4 +12,8 @@ router.put('/:id', authorizeModerator, controller.update);
 
 router.post('/', controller.create);
 
+router.get('/:id', controller.retrieve);
+
+router.post('/', controller.create);
+
 export default router;

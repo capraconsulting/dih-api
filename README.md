@@ -73,6 +73,7 @@ When you've added your migration, do the following:
 
 I.e. you create the old database, run your migration as it would run in production, and see that the migrations works.
 
+To enter some test data into your database, run `npm run load`.
 
 ## Tests
 
