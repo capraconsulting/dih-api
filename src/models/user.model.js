@@ -128,7 +128,7 @@ export default function (sequelize, DataTypes) {
             defaultValue: false,
             allowNull: false
         },
-        agreesToPrivacyTerms: {
+        readPrivacyTerms: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
             allowNull: false
