@@ -39,7 +39,7 @@
     "ava": "0.17.0",
     "ava-spec": "1.0.1",
     "aws-sdk": "2.4.12",
-    "bcrypt": "1.0.2",
+    "bcrypt": "2.0.1",
     "bluebird": "3.4.0",
     "body-parser": "1.15.1",
     "composable-middleware": "0.3.0",
